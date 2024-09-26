@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      USERNAME: admin
+      PASSWORD: password
+      DATABASE: mydb
+      HOST: postgres 
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "admin", "-d", "mydb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  orders:
+    build:
+      context: .  
+      dockerfile: Dockerfile
+    ports:
+      - "3100:3000"  
+    environment:
+      USERNAME: admin
+      PASSWORD: password
+      DATABASE: mydb
+      HOST: postgres  
+      PORT: 5432
+    command: ["node", "./orders/dist/main.js"]
+
+  products:
+    build:
+      context: .  
+      dockerfile: Dockerfile
+    ports:
+      - "3200:3000"  
+    environment:
+      USERNAME: admin
+      PASSWORD: password
+      DATABASE: mydb
+      HOST: postgres 
+      PORT: 5432
+    command: ["node", "./products/dist/main.js"]
+
+  user:
+    build:
+      context: .  
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"  
+    environment:
+      USERNAME: admin
+      PASSWORD: password
+      DATABASE: mydb
+      HOST: postgres  
+      PORT: 5432
+    command: ["node", "./user/dist/main.js"]
+
+volumes:
+  pgdata:
