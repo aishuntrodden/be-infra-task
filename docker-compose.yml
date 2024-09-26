@@ -23,7 +23,7 @@ services:
       context: .  
       dockerfile: Dockerfile
     ports:
-      - "3100:3000"  
+      - "3100:3100"  
     environment:
       USERNAME: admin
       PASSWORD: password
@@ -37,7 +37,7 @@ services:
       context: .  
       dockerfile: Dockerfile
     ports:
-      - "3200:3000"  
+      - "3200:3200"  
     environment:
       USERNAME: admin
       PASSWORD: password
@@ -59,6 +59,14 @@ services:
       HOST: postgres  
       PORT: 5432
     command: ["node", "./user/dist/main.js"]
+
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "4000:80"   # Reverse proxy for products
 
 volumes:
   pgdata:
